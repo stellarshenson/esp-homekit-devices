@@ -34,6 +34,7 @@
  13. Lock Mechanism
  14. RGB/W Lights
  15. Stateless Button
+ 16. Switch 1ch with status sense
  */
 
 //#include <stdio.h>
@@ -2475,7 +2476,7 @@ void hardware_init() {
     
     printf("RC > HW ready\n");
     
-    wifi_config_init("RavenCore", NULL, create_accessory);
+    wifi_config_init("Stellars", NULL, create_accessory);
 }
 
 void settings_init() {
@@ -3088,9 +3089,9 @@ void settings_init() {
 }
 
 homekit_characteristic_t name = HOMEKIT_CHARACTERISTIC_(NAME, NULL);
-homekit_characteristic_t manufacturer = HOMEKIT_CHARACTERISTIC_(MANUFACTURER, "RavenSystem");
+homekit_characteristic_t manufacturer = HOMEKIT_CHARACTERISTIC_(MANUFACTURER, "Stellars");
 homekit_characteristic_t serial = HOMEKIT_CHARACTERISTIC_(SERIAL_NUMBER, NULL);
-homekit_characteristic_t model = HOMEKIT_CHARACTERISTIC_(MODEL, "RavenCore");
+homekit_characteristic_t model = HOMEKIT_CHARACTERISTIC_(MODEL, "Stellars");
 homekit_characteristic_t identify_function = HOMEKIT_CHARACTERISTIC_(IDENTIFY, identify);
 
 homekit_characteristic_t switch1_service_name = HOMEKIT_CHARACTERISTIC_(NAME, "Switch 1");
@@ -3110,6 +3111,7 @@ homekit_characteristic_t covering_service_name = HOMEKIT_CHARACTERISTIC_(NAME, "
 homekit_characteristic_t lock_service_name = HOMEKIT_CHARACTERISTIC_(NAME, "Lock");
 homekit_characteristic_t contact_sensor_service_name = HOMEKIT_CHARACTERISTIC_(NAME, "Sensor");
 homekit_characteristic_t rgbw_service_name = HOMEKIT_CHARACTERISTIC_(NAME, "RGBW");
+homekit_characteristic_t switch1_n_sensor_service_name = HOMEKIT_CHARACTERISTIC_(NAME, "Switch with Sensor"); //for espresso machine
 
 homekit_characteristic_t setup_service_name = HOMEKIT_CHARACTERISTIC_(NAME, "Setup", .id=100);
 homekit_characteristic_t device_type_name = HOMEKIT_CHARACTERISTIC_(CUSTOM_DEVICE_TYPE_NAME, "", .id=101);
@@ -3130,7 +3132,7 @@ void create_accessory() {
     sdk_wifi_get_macaddr(STATION_IF, macaddr);
     
     char *name_value = malloc(17);
-    snprintf(name_value, 17, "RavenCore-%02X%02X%02X", macaddr[3], macaddr[4], macaddr[5]);
+    snprintf(name_value, 17, "Stellars-%02X%02X%02X", macaddr[3], macaddr[4], macaddr[5]);
     name.value = HOMEKIT_STRING(name_value);
     
     char *serial_value = malloc(13);
@@ -3718,6 +3720,7 @@ void create_accessory() {
                     sonoff_setup->characteristics[10] = &custom_init_state_swdm;
                     sonoff_setup->characteristics[11] = &custom_inching_timedm;
                     sonoff_setup->characteristics[12] = &button_filter;
+                    //sonoff_setup->characteristics[13] = &status_sense;
                 
                     if (status == SYSPARAM_OK) {
                         sonoff_setup->characteristics[setting_number] = &ota_firmware;
